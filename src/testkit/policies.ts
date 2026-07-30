@@ -10,6 +10,7 @@ import { doAction } from '../sim/step.js';
 import { ACTIONS } from '../sim/actions.js';
 import { seasonOfDay, DAYS_PER_YEAR } from '../sim/calendar.js';
 import { countTiles } from '../sim/grid.js';
+import { has } from '../sim/animals.js';
 
 export type Policy = (s: GameState) => string;
 
@@ -19,7 +20,7 @@ export const can = (s: GameState, id: string): boolean =>
 /** Works the ground. Sows first, keeps a woodpile, runs a snare line. */
 export const diligent: Policy = (s) => {
   const season = seasonOfDay(s.dayOfYear);
-  const WINTER_WOOD = 26;
+  const WINTER_WOOD = 22;
   const growing = season === 'summer' || season === 'autumn';
 
   // 1. Standing crop. It rots or freezes if you dawdle.
@@ -31,10 +32,16 @@ export const diligent: Policy = (s) => {
     if (can(s, 'sow_barley')) return 'sow_barley';
     if (can(s, 'break_soil')) return 'break_soil';
   }
-  // 3. Raise the works out of genuine surplus. This sits above weeding
+  // 3. Keep a woodpile, in every season including the one that burns it.
+  //    Smoking meat eats into it too. This sits above the discretionary
+  //    work because a cold night costs more than a third pass down the rows.
+  if (s.store.firewood < WINTER_WOOD && can(s, 'chop_wood')) return 'chop_wood';
+
+  // 4. Raise the works out of genuine surplus. This sits above weeding
   //    on purpose: a third pass down the rows is worth ten per cent of a
   //    yield, and a barn is worth more than that for the rest of your life.
-  const fieldBigEnough = countTiles(s.plot, (t) => t.yearsWorked > 0) >= 34;
+  const worked = countTiles(s.plot, (t) => t.yearsWorked > 0);
+  const fieldBigEnough = worked >= 34;
   if (s.store.grain > 60 && fieldBigEnough) {
     for (const kind of ['shed', 'smokehouse', 'hutch', 'byre', 'barn'] as const) {
       if (s.works[kind]) continue;
@@ -46,8 +53,6 @@ export const diligent: Policy = (s) => {
 
   if (can(s, 'weed')) return 'weed';
 
-  // 3. Enough wood to be sure of the winter. Not a stack for its own sake.
-  if (growing && s.store.firewood < WINTER_WOOD && can(s, 'chop_wood')) return 'chop_wood';
 
   // 4. The cat pays for herself in a season; the dog pays at the snares.
   if (!s.animals.cat && can(s, 'take_in_cat')) return 'take_in_cat';
@@ -81,7 +86,10 @@ export const diligent: Policy = (s) => {
   if (can(s, 'clear_stump')) return 'clear_stump';
 
   // 9. Whatever is left of the day.
-  if (can(s, 'break_soil')) return 'break_soil';
+  // Do not break more ground than one pair of hands can keep up with.
+  // The ox tempts you into over-extending; this is where that is resisted.
+  const fieldCap = has(s.animals, 'ox') ? 76 : 48;
+  if (worked < fieldCap && can(s, 'break_soil')) return 'break_soil';
   if (can(s, 'ice_fish')) return 'ice_fish';
   if (s.store.firewood < WINTER_WOOD && can(s, 'chop_wood')) return 'chop_wood';
   if (can(s, 'forage')) return 'forage';

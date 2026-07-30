@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "Stumpland \u2014 a quiet farming game. Northern Europe, about 1010 AD.",
+  "description": "Stumpland — a quiet farming game. Northern Europe, about 1010 AD.",
   "scripts": {
     "play": "tsx src/cli.ts",
     "play:new": "tsx src/cli.ts --new",
@@ -25,6 +25,8 @@
     "concurrently": "^10.0.4",
     "electron": "^43.2.0",
     "electron-builder": "^26.15.3",
+    "gifenc": "^1.0.3",
+    "pngjs": "^7.0.0",
     "three": "^0.185.1",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",

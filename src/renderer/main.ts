@@ -13,6 +13,7 @@ import { seasonOfDay, dayInSeason, daylightHours } from '../sim/calendar.js';
 import { countTiles } from '../sim/grid.js';
 import { initialState, hourOfDay, type GameState } from '../sim/state.js';
 import { diligent, playYears } from '../testkit/policies.js';
+import { Audio } from './audio.js';
 
 // Debug affordance: ?years=5&seed=1 fast-forwards a played farm, so a
 // screenshot can show an established plot rather than day one.
@@ -61,7 +62,17 @@ if (params.has('force')) {
 
 const view = new SceneView();
 const rig = new CameraRig();
+const audio = new Audio();
 
+// Browsers will not open an audio context without a gesture.
+const wake = (): void => {
+  audio.start();
+  audio.setWorld(host.view, hourOverride ?? hourOfDay(host.view as unknown as GameState));
+};
+window.addEventListener('pointerdown', wake, { once: true });
+window.addEventListener('keydown', wake, { once: true });
+
+const HINT = 'drag to pan \u00b7 scroll to zoom \u00b7 R to swing round \u00b7 J for the journal \u00b7 M for sound';
 const canvas = document.getElementById('view') as HTMLCanvasElement;
 const panel = document.getElementById('panel') as HTMLDivElement;
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -144,6 +155,11 @@ window.addEventListener('keydown', (e) => {
     return;
   }
   if (e.key === 'r' || e.key === 'R') rig.swingAround();
+  if (e.key === 'm' || e.key === 'M') {
+    const muted = audio.toggleMute();
+    const hint = document.getElementById('hint');
+    if (hint) hint.textContent = muted ? 'sound off — M for sound' : HINT;
+  }
   // Debug: scrub the hour with [ and ], escape back to real time.
   if (e.key === '[' || e.key === ']') {
     const base = hourOverride ?? hourOfDay(host.view as unknown as GameState);
@@ -194,8 +210,10 @@ panel.addEventListener('click', (e) => {
 });
 
 host.subscribe((s) => {
+  const hour = hourOverride ?? hourOfDay(s as unknown as GameState);
   view.update(s);
-  view.setLight(s, hourOverride ?? hourOfDay(s as unknown as GameState));
+  view.setLight(s, hour);
+  audio.setWorld(s, hour);
   render(s);
 });
 
@@ -225,6 +243,7 @@ function frame(now: number): void {
   last = now;
   rig.update(dt);
   view.animate(dt, frameMs);
+  audio.tick();
   renderer.render(view.scene, rig.camera);
   requestAnimationFrame(frame);
 }

@@ -2,6 +2,12 @@
 
 A quiet farming game. Northern Europe, about 1010 AD.
 
+![Thirteen years on the same plot](docs/years.gif)
+
+*Thirteen years on one plot. Stumps come out, fences go up section by section,
+the field darkens as the soil comes good, and a barn replaces the shed.
+Nothing resets between years.*
+
 You are working a patch of unclaimed forest edge into a farm. Nobody attacks
 you, nothing chases you, and you cannot lose. A bad winter means a lean
 season, not a game over.
@@ -66,6 +72,11 @@ thin and unproductive; nothing ever dies of it. A dog improves the snares, a
 cat cuts what the store loses to rats. Both age. There is a setting to turn
 animal ageing off entirely.
 
+![A midsummer day](docs/day.gif)
+
+*One midsummer day at sixty degrees north — eighteen hours of light, and the
+sun taking a long shallow arc around the sky rather than passing overhead.*
+
 ## Rendering
 
 One `InstancedMesh` per model, about thirty draw calls for the whole plot no
@@ -79,6 +90,8 @@ night, while a full midsummer moon barely scrapes the horizon. A clear winter
 night is genuinely workable. Shadows are one cascade at 2048, tight around the
 plot. Nothing is baked.
 
+![The journal](docs/journal.png)
+
 ## Controls
 
 | | |
@@ -88,6 +101,7 @@ plot. Nothing is baked.
 | `R` | swing slowly to the opposite side |
 | `J` | the journal |
 | `[` `]` | scrub the hour (debug) |
+| `M` | sound on and off |
 | `Esc` | back to real time |
 
 The renderer accepts debug parameters: `?years=10&day=52&hour=23&cloud=0.1&force=snow`.
@@ -107,6 +121,42 @@ Kenney Nature Kit 2.1, CC0. See `assets/README.md` for the source and how to
 restore it. The livestock are placeholder shapes pending Quaternius' CC0
 animal pack — see the same file.
 
+## Sound
+
+Synthesised, not sampled — partly so there is no licence question, mostly
+because it answers the weather. The wind bed opens and brightens as the wind
+rises, rain comes up through the same filter, snow is duller and quieter, the
+stream runs fuller after rain, and the fire only crackles when there is wood
+on it. Birds are sparse and only in daylight in the growing seasons. There is
+no music and nothing plays because you did something correct.
+
+## Balance
+
+Checked across eight seeds and twelve years, for both an automated diligent
+player and one that never farms at all:
+
+| | careless | diligent |
+|---|---|---|
+| hungry nights in 12 years | 0–1 | 28–51, nearly all in year one |
+| cold nights | 0 | 0–2 |
+| grain at year twelve | 0–28 | 56–378 |
+| tiles ever worked | 0 | 68–78 |
+
+The careless player survives every winter on every seed and never builds
+anything. The diligent one has one lean first year and is comfortable after.
+
+## Packaging
+
+```
+npm run dist
+```
+
+`electron-builder` is configured for macOS (dmg and zip), Windows (nsis) and
+Linux (AppImage). The macOS arm64 bundle has been built and launched — about
+277 MB, unsigned, so Gatekeeper will want right-click → Open the first time.
+There is no application icon yet.
+
 ## Still to do
 
-Audio. The animal models. A proper balance pass.
+The Quaternius animal models — the livestock are placeholder shapes. An app
+icon. Code signing, if it is ever to leave this machine.

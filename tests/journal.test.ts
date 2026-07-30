@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { initialState } from '../src/sim/state.js';
 import { doAction } from '../src/sim/step.js';
-import { count } from '../src/sim/journal.js';
+import { count, newTally, writeEntry } from '../src/sim/journal.js';
 import { DAYS_PER_SEASON, DAYS_PER_YEAR } from '../src/sim/calendar.js';
 import { diligent, careless, playYears } from '../src/testkit/policies.js';
 
@@ -90,9 +90,18 @@ describe('it reports what actually happened', () => {
   });
 
   it('empty snares are stated plainly, without complaint', () => {
-    const all = journalOf(10, 1).join(' ');
-    expect(all).toMatch(/empty snares/);
-    expect(all).not.toMatch(/unfortunately|sadly|disappoint/i);
+    // Built directly rather than played into, so this tests the writing
+    // rule and not whichever way an automated player happened to go.
+    const t = newTally(4, 'autumn');
+    t.emptySnares = 9;
+    const bare = writeEntry(t).text;
+    expect(bare).toMatch(/snares gave nothing/);
+    expect(bare).not.toMatch(/unfortunately|sadly|disappoint|!/i);
+
+    const some = newTally(4, 'autumn');
+    some.caught = { hare: 1 };
+    some.emptySnares = 7;
+    expect(writeEntry(some).text).toMatch(/empty snares/);
   });
 
   it('names the neighbours who actually came', () => {
