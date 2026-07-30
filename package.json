@@ -1,0 +1,66 @@
+{
+  "name": "stumpland",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Stumpland \u2014 a quiet farming game. Northern Europe, about 1010 AD.",
+  "scripts": {
+    "play": "tsx src/cli.ts",
+    "play:new": "tsx src/cli.ts --new",
+    "map": "tsx scripts/map.ts",
+    "sim": "tsx scripts/sim-report.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "concurrently -k -n vite,electron -c cyan,yellow \"npm:dev:vite\" \"npm:dev:electron\"",
+    "dev:vite": "vite",
+    "dev:electron": "wait-on tcp:5173 && electron .",
+    "build": "vite build",
+    "shot": "vite build && electron scripts/shot.cjs",
+    "dist": "vite build && electron-builder --mac"
+  },
+  "main": "electron/main.cjs",
+  "devDependencies": {
+    "@types/node": "^22.7.0",
+    "@types/three": "^0.185.1",
+    "concurrently": "^10.0.4",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
+    "three": "^0.185.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.4",
+    "wait-on": "^9.1.0"
+  },
+  "build": {
+    "appId": "land.stump.stumpland",
+    "productName": "Stumpland",
+    "files": [
+      "dist/**",
+      "electron/**",
+      "public/models/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "mac": {
+      "category": "public.app-category.simulation-games",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Game"
+    }
+  }
+}
