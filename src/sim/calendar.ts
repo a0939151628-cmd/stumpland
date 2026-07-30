@@ -1,6 +1,13 @@
 export const DAYS_PER_SEASON = 15;
 export const DAYS_PER_YEAR = DAYS_PER_SEASON * 4;
-export const MIDSUMMER_DAY = DAYS_PER_SEASON + Math.floor(DAYS_PER_SEASON / 2);
+/**
+ * The solstice sits on the first day of summer, so every season boundary
+ * is a solstice or an equinox: spring runs equinox to solstice and opens
+ * at twelve hours of light, summer falls back from eighteen to twelve,
+ * autumn from twelve down to six, and winter climbs back to twelve.
+ */
+export const MIDSUMMER_DAY = DAYS_PER_SEASON;
+export const MIDWINTER_DAY = DAYS_PER_SEASON * 3;
 
 export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
 

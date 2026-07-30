@@ -153,8 +153,8 @@ describe('daylight allows a sane number of actions in every season', () => {
       return n;
     };
 
-    const midsummer = countActions(22);
-    const midwinter = countActions(52);
+    const midsummer = countActions(15);
+    const midwinter = countActions(45);
 
     // Roughly three times the working day, which is the whole point.
     expect(midwinter).toBeLessThan(midsummer);
@@ -165,8 +165,8 @@ describe('daylight allows a sane number of actions in every season', () => {
   });
 
   it('daylight follows the stated curve', () => {
-    expect(daylightHours(22)).toBeCloseTo(18, 1); // midsummer
-    expect(daylightHours(52)).toBeCloseTo(6, 1);  // midwinter
+    expect(daylightHours(15)).toBeCloseTo(18, 1); // solstice, first day of summer
+    expect(daylightHours(45)).toBeCloseTo(6, 1);  // first day of winter
     for (let d = 0; d < DAYS_PER_YEAR; d++) {
       expect(daylightHours(d)).toBeGreaterThanOrEqual(6);
       expect(daylightHours(d)).toBeLessThanOrEqual(18);
@@ -175,15 +175,15 @@ describe('daylight allows a sane number of actions in every season', () => {
 
   it('stamina binds the summer, daylight binds the winter', () => {
     const summer = initialState(2);
-    summer.dayOfYear = 22;
-    summer.hoursLeft = daylightHours(22);
+    summer.dayOfYear = 15;
+    summer.hoursLeft = daylightHours(15);
     while (doAction(summer, 'chop_wood').ok) { /* until something stops us */ }
     // Ran out of body before light.
     expect(summer.hoursLeft).toBeGreaterThan(0);
 
     const winter = initialState(2);
-    winter.dayOfYear = 52;
-    winter.hoursLeft = daylightHours(52);
+    winter.dayOfYear = 45;
+    winter.hoursLeft = daylightHours(45);
     let acted = 0;
     while (winter.hoursLeft >= ACTIONS.chop_wood!.hours) {
       if (!doAction(winter, 'chop_wood').ok) break;

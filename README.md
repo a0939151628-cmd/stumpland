@@ -46,9 +46,12 @@ reads it. Swap renderers and the game survives untouched.
 ## What the simulation does
 
 **Day by day.** Every action costs both stamina and daylight. Daylight runs a
-real solar curve — eighteen hours at midsummer, six at midwinter, at sixty
-degrees north. Stamina binds the summer; daylight binds the winter. That trade
-is most of why the seasons feel different.
+real solar curve at sixty degrees north, and every season boundary is a
+solstice or an equinox — spring opens at twelve hours and climbs to eighteen,
+autumn falls from twelve to six, winter climbs back. Heat lags the light by
+about a week, the way ground and water actually behave. Stamina binds the
+summer; daylight binds the winter. That trade is most of why the seasons feel
+different.
 
 **Weather is a state, not a dice roll.** Temperature, cloud, precipitation and
 wind drift day to day with seasonal bias and multi-day fronts, so a wet week
@@ -74,8 +77,8 @@ animal ageing off entirely.
 
 ![A midsummer day](docs/day.gif)
 
-*One midsummer day at sixty degrees north — eighteen hours of light, and the
-sun taking a long shallow arc around the sky rather than passing overhead.*
+*The solstice at sixty degrees north — eighteen hours of light, and the sun
+taking a long shallow arc around the sky rather than passing overhead.*
 
 ## Rendering
 
@@ -91,6 +94,13 @@ night is genuinely workable. Shadows are one cascade at 2048, tight around the
 plot. Nothing is baked.
 
 ![The journal](docs/journal.png)
+
+*The journal, read back through the years.*
+
+![A full moon over deep winter](docs/winter-moon.png)
+
+*A full midwinter moon rides at fifty degrees and is up all night, while the
+midwinter sun barely clears six. The hearth throws the only warm light.*
 
 ## Controls
 

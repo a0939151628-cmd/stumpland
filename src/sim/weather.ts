@@ -40,8 +40,15 @@ export function initialWeather(): Weather {
   };
 }
 
+/**
+ * Heat lags the light. The warmest days come well after the solstice —
+ * ground and water take weeks to catch up — so the temperature curve is
+ * pushed back about a week from the daylight curve.
+ */
+const THERMAL_LAG_DAYS = 7;
+
 function seasonalTempMean(day: number): number {
-  const phase = (2 * Math.PI * (day - MIDSUMMER_DAY)) / DAYS_PER_YEAR;
+  const phase = (2 * Math.PI * (day - MIDSUMMER_DAY - THERMAL_LAG_DAYS)) / DAYS_PER_YEAR;
   return 10 + 12 * Math.cos(phase);
 }
 

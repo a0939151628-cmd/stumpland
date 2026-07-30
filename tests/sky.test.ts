@@ -7,8 +7,8 @@ import { DAYS_PER_YEAR, daylightHours } from '../src/sim/calendar.js';
 import { initialState, hourOfDay } from '../src/sim/state.js';
 import { doAction } from '../src/sim/step.js';
 
-const MIDSUMMER = 22;
-const MIDWINTER = 52;
+const MIDSUMMER = 15; // first day of summer, the solstice
+const MIDWINTER = 45; // first day of winter
 
 describe('the sun follows a real arc', () => {
   it('rides high at midsummer and barely clears the horizon at midwinter', () => {
@@ -57,6 +57,26 @@ describe('the sun follows a real arc', () => {
   });
 });
 
+/**
+ * The first year whose given day-of-year lands on a full moon. Searched
+ * rather than hardcoded — the moon drifts against a sixty-day year, so a
+ * fixed year would go stale the moment the calendar moved.
+ */
+function fullMoonOn(dayOfYear: number): number {
+  let best = 0;
+  let bestLit = -1;
+  for (let year = 0; year < 400; year++) {
+    const abs = year * DAYS_PER_YEAR + dayOfYear;
+    const lit = moonIllumination(abs);
+    if (lit > bestLit) {
+      bestLit = lit;
+      best = abs;
+    }
+    if (lit > 0.995) break;
+  }
+  return best;
+}
+
 describe('the moon runs its own 29-day cycle', () => {
   it('cycles new to full to new', () => {
     expect(lunarPhase(0)).toBeCloseTo(0, 2);
@@ -86,8 +106,7 @@ describe('the moon runs its own 29-day cycle', () => {
   });
 
   it('a full winter moon rides high all night — the light that makes winter workable', () => {
-    // Chosen so the phase lands full in deep winter.
-    const absDay = 22 * DAYS_PER_YEAR + MIDWINTER;
+    const absDay = fullMoonOn(MIDWINTER);
     expect(moonIllumination(absDay)).toBeGreaterThan(0.9);
 
     const midnight = moonPosition(absDay, 0, MIDWINTER).altitude;
@@ -97,7 +116,7 @@ describe('the moon runs its own 29-day cycle', () => {
   });
 
   it('a full summer moon skims the horizon and is barely worth having', () => {
-    const absDay = 22 * DAYS_PER_YEAR + MIDSUMMER;
+    const absDay = fullMoonOn(MIDSUMMER);
     expect(moonIllumination(absDay)).toBeGreaterThan(0.9);
     expect(moonPosition(absDay, 0, MIDSUMMER).altitude).toBeLessThan(15);
   });
