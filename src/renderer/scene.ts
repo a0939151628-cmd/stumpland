@@ -138,6 +138,7 @@ export class SceneView {
     cover.mesh.castShadow = false;
     this.batches.set('snowcover' as ModelName, cover);
     this.scene.add(cover.mesh);
+    await this.stock.load();
     this.addCottage();
     this.ready = true;
     if (this.pending) {

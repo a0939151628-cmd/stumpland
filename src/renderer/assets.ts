@@ -69,8 +69,10 @@ const loader = new GLTFLoader();
 /**
  * Load one model and flatten it to a single geometry with vertex colours.
  */
-export async function loadGeometry(name: ModelName): Promise<THREE.BufferGeometry> {
-  const gltf = await loader.loadAsync(`models/${name}.glb`);
+export async function loadGeometry(name: ModelName | (string & {})): Promise<THREE.BufferGeometry> {
+  // A bare filename is taken as-is so optional packs can be probed for.
+  const url = name.endsWith('.glb') ? `models/${name}` : `models/${name}.glb`;
+  const gltf = await loader.loadAsync(url);
   const parts: THREE.BufferGeometry[] = [];
 
   gltf.scene.updateWorldMatrix(true, true);

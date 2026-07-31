@@ -128,8 +128,13 @@ npm run dist          package with electron-builder
 ## Assets
 
 Kenney Nature Kit 2.1, CC0. See `assets/README.md` for the source and how to
-restore it. The livestock are placeholder shapes pending Quaternius' CC0
-animal pack — see the same file.
+restore it.
+
+The livestock are **drop-in ready**: put eight GLBs named `animal_hen.glb`,
+`animal_ox.glb` and so on into `public/models/` and they are used on the next
+load, re-centred and scaled to fit whatever size they were authored at. No code
+changes. Anything missing falls back to a flat-shaded stand-in, which is what
+ships today. `assets/README.md` has the table and where to get them.
 
 ## Sound
 
@@ -170,5 +175,5 @@ There is no application icon yet.
 
 ## Still to do
 
-The Quaternius animal models — the livestock are placeholder shapes. An app
+The animal GLBs themselves — the loader is in and waiting for them. An app
 icon. Code signing, if it is ever to leave this machine.
