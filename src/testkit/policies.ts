@@ -41,7 +41,7 @@ export const diligent: Policy = (s) => {
   //    on purpose: a third pass down the rows is worth ten per cent of a
   //    yield, and a barn is worth more than that for the rest of your life.
   const worked = countTiles(s.plot, (t) => t.yearsWorked > 0);
-  const fieldBigEnough = worked >= 34;
+  const fieldBigEnough = worked >= countTiles(s.plot, (t) => t.terrain === 'clearing') * 0.45;
   if (s.store.grain > 60 && fieldBigEnough) {
     for (const kind of ['shed', 'smokehouse', 'hutch', 'byre', 'barn'] as const) {
       if (s.works[kind]) continue;
@@ -87,8 +87,10 @@ export const diligent: Policy = (s) => {
 
   // 9. Whatever is left of the day.
   // Do not break more ground than one pair of hands can keep up with.
-  // The ox tempts you into over-extending; this is where that is resisted.
-  const fieldCap = has(s.animals, 'ox') ? 76 : 48;
+  // Without an ox that is about two thirds of the clearing; with one it
+  // is the lot, which is what the ox is for.
+  const arable = countTiles(s.plot, (t) => t.terrain === 'clearing');
+  const fieldCap = has(s.animals, 'ox') ? arable : Math.round(arable * 0.66);
   if (worked < fieldCap && can(s, 'break_soil')) return 'break_soil';
   if (can(s, 'ice_fish')) return 'ice_fish';
   if (s.store.firewood < WINTER_WOOD && can(s, 'chop_wood')) return 'chop_wood';

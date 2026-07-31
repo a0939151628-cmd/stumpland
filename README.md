@@ -150,10 +150,12 @@ player and one that never farms at all:
 | hungry nights in 12 years | 0–1 | 28–51, nearly all in year one |
 | cold nights | 0 | 0–2 |
 | grain at year twelve | 0–28 | 56–378 |
-| tiles ever worked | 0 | 68–78 |
+| tiles ever worked | 0 | 69–74 of a 69–78 tile clearing |
 
 The careless player survives every winter on every seed and never builds
-anything. The diligent one has one lean first year and is comfortable after.
+anything. The diligent one has one lean first year and is comfortable after,
+and by year twelve has worked essentially the whole clearing — the ox is what
+makes the last third of it reachable.
 
 ## Packaging
 

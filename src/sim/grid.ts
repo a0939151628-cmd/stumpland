@@ -116,6 +116,22 @@ export function makePlot(seed = 1): Plot {
   return plot;
 }
 
+/**
+ * The old clearing: a soft-edged ellipse in the middle of the plot.
+ *
+ * Sized so that a farmer who eventually gets an ox can work essentially
+ * all of it in a lifetime. Bigger than this and a quarter of the ground
+ * stays rough forever, which reads as unfinished rather than as scale.
+ */
+const CLEARING = { cx: 10.5, cy: 10.0, rx: 5.4, ry: 4.75 };
+
+/** How far a tile sits from the middle of the clearing, 1 being the edge. */
+function clearingDistance(x: number, y: number): number {
+  const dx = (x - CLEARING.cx) / CLEARING.rx;
+  const dy = (y - CLEARING.cy) / CLEARING.ry;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
 function terrainFor(x: number, y: number, rand: () => number): Terrain {
   // Stream: west edge, wandering a little so it is not a ruled line.
   const streamX = 1 + Math.round(Math.sin(y * 0.45) * 0.8);
@@ -127,12 +143,7 @@ function terrainFor(x: number, y: number, rand: () => number): Terrain {
 
   // Clearing: the workable middle. Soft-edged so it reads as a real
   // gap in the trees rather than a rectangle.
-  const cx = 10.5;
-  const cy = 10.0;
-  const dx = (x - cx) / 6.4;
-  const dy = (y - cy) / 5.6;
-  const d = Math.sqrt(dx * dx + dy * dy);
-  if (d < 0.85 + rand() * 0.22) return 'clearing';
+  if (clearingDistance(x, y) < 0.85 + rand() * 0.22) return 'clearing';
 
   return 'forest';
 }
@@ -145,10 +156,7 @@ function scatterStumps(plot: Plot, rand: () => number): void {
   forEachTile(plot, (t) => {
     if (t.terrain !== 'clearing') return;
     // Denser toward the edges, where the trees were taken last.
-    const dx = (t.x - 10.5) / 6.4;
-    const dy = (t.y - 10.0) / 5.6;
-    const d = Math.sqrt(dx * dx + dy * dy);
-    const chance = 0.18 + d * 0.45;
+    const chance = 0.18 + clearingDistance(t.x, t.y) * 0.45;
     if (rand() < chance) t.stump = true;
   });
 }
